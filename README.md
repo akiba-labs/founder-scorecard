@@ -9,4 +9,16 @@ Free, no-login checks for any business or idea:
 
 Based on frameworks Codie Sanchez, Alex Hormozi, and Daniel Priestley shared on The Diary of a CEO. Not affiliated with or endorsed by them or the show. Educational rules of thumb only.
 
-Live: https://fund-fix-flee.vercel.app
+- Full app and API (Vercel): https://fund-fix-flee.vercel.app
+- Scorecard (GitHub Pages): https://akiba-labs.github.io/founder-scorecard/
+
+```
+npm install
+npm test
+npm run build
+npm run build:pages
+```
+
+`npm run build` is the Vercel app (scorecard, JSON API, share pages). `npm run build:pages` writes a static `out/` for GitHub Pages and checks that internal links and assets resolve under `/founder-scorecard`. Server routes stay in the repo; the Pages script only moves them aside for that build.
+
+GitHub settings: **Settings → Pages → Build and deployment → Source: GitHub Actions**. Pushes to `main` deploy with `.github/workflows/pages.yml`. The copy-paste steps for the other tool repos are at the top of `scripts/build-pages.mjs`.

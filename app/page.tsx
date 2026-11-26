@@ -2,21 +2,24 @@ import type { Metadata } from "next";
 import { FaqSection, type FaqItem } from "@/components/faq-section";
 import { Scorecard } from "@/components/scorecard";
 import { RATE_LIMIT } from "@/lib/agent-api";
+import { API_PAUSED_NOTE, isGithubPages, pagesSiteUrl } from "@/lib/hosting";
 import { DISCLAIMER_SHORT, HONESTY, PUBLIC_URL, SITE_NAME } from "@/lib/site";
 
 const title = "Fund it, fix it, or flee it: free MOAT score for your business idea";
 const description =
   "Free founder scorecard: score any business idea with MOAT (Margin, Operations, Advantage, TAM), check price headroom from your close rate, see if customers fund growth in 30 days, and estimate what an old email list could bring in. No login.";
 
+const siteUrl = isGithubPages ? pagesSiteUrl(PUBLIC_URL) : PUBLIC_URL;
+
 export const metadata: Metadata = {
   title: { absolute: `${title} · ${SITE_NAME}` },
   description,
-  alternates: { canonical: `${PUBLIC_URL}/` },
+  alternates: { canonical: isGithubPages ? "/" : `${PUBLIC_URL}/` },
   openGraph: {
     title,
     description,
     type: "website",
-    url: `${PUBLIC_URL}/`,
+    url: isGithubPages ? "/" : `${PUBLIC_URL}/`,
     images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image", title, description, images: ["/opengraph-image"] },
@@ -26,7 +29,7 @@ const appJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   name: SITE_NAME,
-  url: `${PUBLIC_URL}/`,
+  url: `${siteUrl}/`,
   applicationCategory: "BusinessApplication",
   operatingSystem: "Any (web browser)",
   isAccessibleForFree: true,
@@ -72,11 +75,15 @@ const faq: FaqItem[] = [
   },
   {
     q: "Is there an API for AI agents?",
-    a: `Yes, free and keyless, with CORS open. Endpoints: GET ${PUBLIC_URL}/api/moat, /api/price, /api/cash, and /api/email-list (same fields as POST JSON). Every response includes a disclaimer field. Fair use is about ${RATE_LIMIT} requests per minute per IP. OpenAPI: ${PUBLIC_URL}/openapi.json.`,
+    a: isGithubPages
+      ? API_PAUSED_NOTE
+      : `Yes, free and keyless, with CORS open. Endpoints: GET ${PUBLIC_URL}/api/moat, /api/price, /api/cash, and /api/email-list (same fields as POST JSON). Every response includes a disclaimer field. Fair use is about ${RATE_LIMIT} requests per minute per IP. OpenAPI: ${PUBLIC_URL}/openapi.json.`,
   },
   {
     q: "Can my AI assistant score an idea through MCP?",
-    a: "Yes. Tools score_business_idea_moat, price_headroom_check, thirty_day_cash_check, and email_list_reactivation_value are on the free remote MCP server at https://free-agent-tools.vercel.app/mcp (streamable HTTP, no auth). Add that URL to Claude, Cursor, ChatGPT, or another MCP client.",
+    a: isGithubPages
+      ? API_PAUSED_NOTE
+      : "Yes. Tools score_business_idea_moat, price_headroom_check, thirty_day_cash_check, and email_list_reactivation_value are on the free remote MCP server at https://free-agent-tools.vercel.app/mcp (streamable HTTP, no auth). Add that URL to Claude, Cursor, ChatGPT, or another MCP client.",
   },
   {
     q: "Is a FUND IT score investment or business advice?",
