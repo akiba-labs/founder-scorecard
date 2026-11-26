@@ -4,6 +4,7 @@ import { useState } from "react";
 import { moat, price, cash, list, type MoatInputs } from "@/lib/calc";
 import { CardDisclaimer } from "@/components/card-disclaimer";
 import { ShareBar } from "@/components/share-bar";
+import { isGithubPages, pagesSiteUrl } from "@/lib/hosting";
 import { PUBLIC_URL, VERDICT_LINE, resultHeadline, resultPath } from "@/lib/share";
 
 const fmt = (n: number) => (Number.isFinite(n) ? Math.round(n).toLocaleString("en-US") : "0");
@@ -80,6 +81,7 @@ export function MoatTool({ initial }: { initial?: MoatInputs }) {
   const [c, setC] = useState(initial ? { pain: initial.pain, money: initial.money, suffer: initial.suffer } : { pain: true, money: true, suffer: true });
   const r = moat({ ...s, ...c });
   const path = resultPath({ ...s, ...c });
+  const shareUrl = isGithubPages ? `${pagesSiteUrl(PUBLIC_URL)}/` : `${PUBLIC_URL}${path}`;
   const color = r.verdict === "FUND IT" ? "text-teal-200" : r.verdict === "FIX IT" ? "text-amber" : "text-rose-300";
   const checks = [
     { k: "pain", label: "Measurable pain", help: "Buyers can point to a number this improves" },
@@ -123,11 +125,13 @@ export function MoatTool({ initial }: { initial?: MoatInputs }) {
         share={
           <div className="mt-6 border-t border-line pt-4" data-testid="share-result">
             <p className="text-xs text-muted">
-              Share this score. The link carries your four scores and three checks, so anyone who opens it sees the same verdict. Nothing is stored.
+              {isGithubPages
+                ? "Share the scorecard. A link to this exact result returns when hosting is back."
+                : "Share this score. The link carries your four scores and three checks, so anyone who opens it sees the same verdict. Nothing is stored."}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <ShareBar url={`${PUBLIC_URL}${path}`} text={`My business idea: ${resultHeadline(r)}. Free scorecard:`} />
-              {initial ? null : (
+              <ShareBar url={shareUrl} text={`My business idea: ${resultHeadline(r)}. Free scorecard:`} />
+              {isGithubPages || initial ? null : (
                 <a href={path} className="text-sm text-muted underline underline-offset-2 hover:text-foreground">
                   Open result page
                 </a>
